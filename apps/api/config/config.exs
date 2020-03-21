@@ -18,7 +18,6 @@ config :api, Api.Endpoint,
   secret_key_base: "SkhLSEBG7hcIRVGRQMhMAHYtlVwbHH7LHlWTUUCj6mIhlXgxkVbW2YlSnRutaTzq",
   render_errors: [view: Api.ErrorView, accepts: ~w(json)]
 
-
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 

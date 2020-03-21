@@ -71,7 +71,7 @@ defmodule Api.HealthCheck do
         end
 
       case result do
-        nil -> true
+        {:ok, _} -> true
         _ -> false
       end
     end
