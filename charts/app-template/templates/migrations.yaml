@@ -1,0 +1,33 @@
+{{- if .Values.migrations.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "app-template.fullname" . }}-migration
+  labels:
+    {{- include "app-template.labels" $ | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-delete-policy": "hook-succeeded"
+spec:
+  activeDeadlineSeconds: 60
+  template:
+    metadata:
+      name: {{ template "app-template.fullname" . }}-migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: {{ template "app-template.fullname" . }}-migration
+          image: migrate/migrate:latest
+          command: ["eval", "Domain.Migration.migrate"]
+          {{- if or (.Values.configMap) (.Values.secrets) }}
+          envFrom:
+          {{- if .Values.configMap }}
+            - configMapRef:
+                name: {{ template "app-template.fullname" . }}
+          {{- end }}
+          {{- if .Values.secrets }}
+            - secretRef:
+                name: {{ template "app-template.fullname" . }}
+          {{- end }}
+          {{- end }}
+{{- end }}

@@ -1,0 +1,26 @@
+serviceAccount:
+  create: false
+
+app:
+  image:
+    repository: repo/app
+    tag: latest
+  labels: {}
+  livenessProbe: {}
+  readinessProbe: {}
+  resources:
+    requests:
+      cpu: 20m
+      memory: 30Mi
+    limits:
+      cpu: 50m
+      memory: 50Mi
+
+service:
+  type: ClusterIP
+  externalPort: 80
+  annotations: {}
+  labels: {}
+
+configMap:
+  LOG_LEVEL: "debug"

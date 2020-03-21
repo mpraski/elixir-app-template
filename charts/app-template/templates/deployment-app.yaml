@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app-template.fullname" . }}
+  {{- with .Values.app.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/tier: app
+    {{- include "app-template.labels" . | nindent 4 }}
+  {{- if .Values.app.labels }}
+    {{- toYaml .Values.app.labels | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "app-template.name" . }}
+      tier: app
+      release: {{ $.Release.Name }}
+  replicas: {{ .Values.app.replicaCount }}
+  strategy:
+    {{- toYaml .Values.strategy | nindent 4 }}
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      name: {{ template "app-template.fullname" . }}
+    {{- if .Values.app.podAnnotations }}
+      annotations:
+        {{- toYaml .Values.app.podAnnotations | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ template "app-template.name" . }}
+        tier: app
+        release: {{ $.Release.Name }}
+        version: "{{ if $.Values.app.image.tag }}{{ $.Values.app.image.tag }}{{ else }}{{ $.Chart.AppVersion }}{{ end }}"
+      {{- if .Values.app.labels }}
+        {{- toYaml .Values.app.labels | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- if .Values.app.volumes }}
+      volumes:
+        {{- toYaml .Values.app.volumes | nindent 8 }}
+    {{- end }}
+      containers:
+      - name: app
+        image: {{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}
+        imagePullPolicy: {{ .Values.app.image.pullPolicy }}
+      {{- if .Values.app.volumeMounts }}
+        volumeMounts:
+          {{- toYaml .Values.app.volumeMounts | indent 10 }}
+      {{- end }}
+        {{- if or (.Values.configMap) (.Values.secrets) }}
+        envFrom:
+        {{- if .Values.configMap }}
+          - configMapRef:
+              name: {{ template "app-template.fullname" . }}
+        {{- end }}
+        {{- if .Values.secrets }}
+          - secretRef:
+              name: {{ template "app-template.fullname" . }}
+        {{- end }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.app.port | default 8080 }}
+          protocol: {{ .Values.app.protocol | default "TCP" }}
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.app.livenessProbe.path | default "/live" }}
+            port: {{ .Values.app.livenessProbe.port | default "http" }}
+          initialDelaySeconds: {{ .Values.app.livenessProbe.initialDelaySeconds | default 10 }}
+          periodSeconds: {{ .Values.app.livenessProbe.periodSeconds | default 10 }}
+          timeoutSeconds: {{ .Values.app.livenessProbe.timeoutSeconds | default 1 }}
+          successThreshold: {{ .Values.app.livenessProbe.successThreshold | default 1 }}
+          failureThreshold: {{ .Values.app.livenessProbe.failureThreshold | default 3 }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.app.readinessProbe.path | default "/ready" }}
+            port: {{ .Values.app.readinessProbe.port | default "http" }}
+          initialDelaySeconds: {{ .Values.app.readinessProbe.initialDelaySeconds | default 15 }}
+          periodSeconds: {{ .Values.app.readinessProbe.periodSeconds | default 10 }}
+          timeoutSeconds: {{ .Values.app.readinessProbe.timeoutSeconds | default 1 }}
+          successThreshold: {{ .Values.app.readinessProbe.successThreshold | default 1 }}
+          failureThreshold: {{ .Values.app.readinessProbe.failureThreshold | default 3 }}
+      {{- if .Values.app.resources }}
+      {{- with .Values.app.resources }}
+        resources:
+          {{ toYaml . | nindent 10 }}
+      {{- end }}
+      {{- end }}
+      serviceAccountName: {{ template "app-template.serviceAccountName" . }}
