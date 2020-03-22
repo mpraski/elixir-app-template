@@ -11,15 +11,12 @@ services:
       - 3306:3306
   migration:
     build: .
-    # Sleep a few seconds to wait for DB to
-    # come online. This is not the most elegant
-    # solution but works fine
     command: eval Domain.Migration.migrate
     env_file:
       - app.env
     depends_on:
       - database
-  phoenix:
+  app:
     build: .
     command: start
     env_file:
