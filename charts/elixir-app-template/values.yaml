@@ -1,6 +1,13 @@
 serviceAccount:
   create: true
 
+pdb:
+  enabled: true
+  minAvailable: 1
+
+hpa:
+  enabled: false
+
 app:
   image:
     repository: trow.kube-public:31000/elixir-app-template
