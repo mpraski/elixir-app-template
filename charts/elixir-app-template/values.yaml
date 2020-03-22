@@ -22,5 +22,14 @@ service:
   annotations: {}
   labels: {}
 
+serviceMonitor:
+  enabled: true
+  interval: "30s"
+  path: /metrics
+  selector: {}
+
+migration:
+  enabled: true
+
 configMap:
   LOG_LEVEL: "debug"
