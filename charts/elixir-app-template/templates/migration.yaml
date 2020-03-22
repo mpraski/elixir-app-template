@@ -17,7 +17,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: {{ template "app-template.fullname" . }}-migration
-          image: migrate/migrate:latest
+          image: trow.kube-public:31000/elixir-app-template:latest
           command: ["eval", "Domain.Migration.migrate"]
           {{- if or (.Values.configMap) (.Values.secrets) }}
           envFrom:

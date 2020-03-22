@@ -3,7 +3,7 @@ serviceAccount:
 
 app:
   image:
-    repository: repo/app
+    repository: trow.kube-public:31000/elixir-app-template:latest
     tag: latest
   labels: {}
   livenessProbe: {}
@@ -11,10 +11,10 @@ app:
   resources:
     requests:
       cpu: 20m
-      memory: 30Mi
+      memory: 80Mi
     limits:
       cpu: 50m
-      memory: 50Mi
+      memory: 200Mi
 
 service:
   type: ClusterIP
@@ -23,7 +23,7 @@ service:
   labels: {}
 
 serviceMonitor:
-  enabled: true
+  enabled: false
   interval: "30s"
   path: /metrics
   selector: {}
@@ -33,3 +33,7 @@ migration:
 
 configMap:
   LOG_LEVEL: "debug"
+
+secrets:
+  SECRET_KEY_BASE: RKJnGRrqUKHwq8DcC3Ruiv/IpKPnguVQpVVQXaViiuOnnpBW7vFg4m/lwcFO/Xg5
+  DATABASE_URL: ecto://eat_user:qwerty123@database-mysql/eat_db

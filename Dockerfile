@@ -1,6 +1,6 @@
 # Set the required arguments
 ARG APP=app
-ARG PORT=4000
+ARG PORT=8080
 ARG UID=1000
 ARG MIX_ENV=prod
 ARG PROJECT=app_template
