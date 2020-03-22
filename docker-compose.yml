@@ -25,7 +25,7 @@ services:
     env_file:
       - app.env
     ports:
-      - 4000:4000
+      - 8080:8080
     depends_on:
       - migration
 volumes:

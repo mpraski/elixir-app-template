@@ -18,7 +18,7 @@ spec:
       containers:
         - name: {{ template "app-template.fullname" . }}-migration
           image: trow.kube-public:31000/elixir-app-template:latest
-          command: ["eval", "Domain.Migration.migrate"]
+          args: ["eval", "Domain.Migration.migrate"]
           {{- if or (.Values.configMap) (.Values.secrets) }}
           envFrom:
           {{- if .Values.configMap }}

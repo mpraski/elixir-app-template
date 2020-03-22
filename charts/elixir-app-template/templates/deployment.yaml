@@ -1,0 +1,95 @@
+{{- with .Values.app }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app-template.fullname" $ }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    app.kubernetes.io/tier: app
+    {{- include "app-template.labels" $ | nindent 4 }}
+  {{- if .labels }}
+    {{- toYaml .labels | nindent 4 }}
+  {{- end }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "app-template.name" $ }}
+      tier: app
+      release: {{ $.Release.Name }}
+  replicas: {{ .replicaCount }}
+  strategy:
+    {{- toYaml $.Values.strategy | nindent 4 }}
+  revisionHistoryLimit: 10
+  template:
+    metadata:
+      name: {{ template "app-template.fullname" $ }}
+    {{- if .podAnnotations }}
+      annotations:
+        {{- toYaml .podAnnotations | nindent 8 }}
+    {{- end }}
+      labels:
+        app: {{ template "app-template.name" $ }}
+        tier: app
+        release: {{ $.Release.Name }}
+        version: "{{ if .image.tag }}{{ .image.tag }}{{ else }}{{ $.Chart.AppVersion }}{{ end }}"
+      {{- if .labels }}
+        {{- toYaml .labels | nindent 8 }}
+      {{- end }}
+    spec:
+    {{- if .volumes }}
+      volumes:
+        {{- toYaml .volumes | nindent 8 }}
+    {{- end }}
+      containers:
+      - name: app
+        image: {{ .image.repository }}:{{ .image.tag }}
+        imagePullPolicy: {{ .image.pullPolicy }}
+        args: ["start"]
+      {{- if .volumeMounts }}
+        volumeMounts:
+          {{- toYaml .volumeMounts | nindent 10 }}
+      {{- end }}
+        {{- if or ($.Values.configMap) ($.Values.secrets) }}
+        envFrom:
+        {{- if $.Values.configMap }}
+          - configMapRef:
+              name: {{ template "app-template.fullname" $ }}
+        {{- end }}
+        {{- if $.Values.secrets }}
+          - secretRef:
+              name: {{ template "app-template.fullname" $ }}
+        {{- end }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .port | default 8080 }}
+          protocol: {{ .protocol | default "TCP" }}
+        livenessProbe:
+          httpGet:
+            path: {{ .livenessProbe.path | default "/live" }}
+            port: {{ .livenessProbe.port | default "http" }}
+          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 10 }}
+          periodSeconds: {{ .livenessProbe.periodSeconds | default 10 }}
+          timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
+          successThreshold: {{ .livenessProbe.successThreshold | default 1 }}
+          failureThreshold: {{ .livenessProbe.failureThreshold | default 3 }}
+        readinessProbe:
+          httpGet:
+            path: {{ .readinessProbe.path | default "/ready" }}
+            port: {{ .readinessProbe.port | default "http" }}
+          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 15 }}
+          periodSeconds: {{ .readinessProbe.periodSeconds | default 10 }}
+          timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
+          successThreshold: {{ .readinessProbe.successThreshold | default 1 }}
+          failureThreshold: {{ .readinessProbe.failureThreshold | default 3 }}
+      {{- if .resources }}
+      {{- with .resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+      {{- end }}
+      {{- end }}
+      serviceAccountName: {{ template "app-template.serviceAccountName" $ }}
+{{- end }}

@@ -1,9 +1,9 @@
 serviceAccount:
-  create: false
+  create: true
 
 app:
   image:
-    repository: trow.kube-public:31000/elixir-app-template:latest
+    repository: trow.kube-public:31000/elixir-app-template
     tag: latest
   labels: {}
   livenessProbe: {}
@@ -29,7 +29,7 @@ serviceMonitor:
   selector: {}
 
 migration:
-  enabled: true
+  enabled: false
 
 configMap:
   LOG_LEVEL: "debug"
