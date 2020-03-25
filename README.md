@@ -37,6 +37,10 @@ For packaging and testing with the DB:
 
 In order to run migrations you have to run the container with command `eval Domain.Migration.migrate` (while supplying all the env variables you would for starting the app).
 
+## Helm install
+
+`helm install elixir-app-template --namespace=default --values=./charts/elixir-app-template/values.yaml ./charts/elixir-app-template`
+
 ## Notes
 
 If you run into problems with running the MySQL container in docker-compose run `docker system prune --volumes`. This will ensure MySQL doesn't complain about any files from previous runs being present in this volume when initializing the DB for the first time.
