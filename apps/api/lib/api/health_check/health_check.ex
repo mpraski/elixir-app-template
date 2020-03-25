@@ -55,12 +55,6 @@ defmodule Api.HealthCheck do
 
   # Common checks
 
-  def healthy do
-    fn ->
-      true
-    end
-  end
-
   def ping_repo(repo) do
     fn ->
       result =

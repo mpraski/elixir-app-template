@@ -23,9 +23,6 @@ defmodule Api.Application do
 
     # Configure health checks
     HealthCheck.add_readiness(HealthCheck.ping_repo(Domain.Repo))
-    HealthCheck.add_readiness(HealthCheck.resolve_domain("google.com"))
-
-    HealthCheck.add_liveness(HealthCheck.healthy())
 
     # Configure Prometheus metrics exporter
     Metrics.Exporter.setup()

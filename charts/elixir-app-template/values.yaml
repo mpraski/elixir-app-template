@@ -12,16 +12,17 @@ app:
   image:
     repository: trow.kube-public:31000/elixir-app-template
     tag: latest
+    pullPolicy: Always
   labels: {}
   livenessProbe: {}
   readinessProbe: {}
   resources:
     requests:
-      cpu: 20m
-      memory: 80Mi
-    limits:
       cpu: 50m
-      memory: 200Mi
+      memory: 128Mi
+    limits:
+      cpu: 250m
+      memory: 256Mi
 
 service:
   type: ClusterIP
@@ -36,7 +37,7 @@ serviceMonitor:
   selector: {}
 
 migration:
-  enabled: false
+  enabled: true
 
 configMap:
   LOG_LEVEL: "debug"
