@@ -51,3 +51,10 @@ Create the name of the service account
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create the egress label for this service
+*/}}
+{{- define "app-template.egressLabel" -}}
+{{- printf "egress-%s" .Chart.Name | kebabcase -}}: "true"
+{{- end -}}

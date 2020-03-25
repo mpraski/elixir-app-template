@@ -1,6 +1,9 @@
 serviceAccount:
   create: true
 
+networkPolicy:
+  enabled: true
+
 pdb:
   enabled: true
   minAvailable: 1
