@@ -7,5 +7,7 @@ defmodule Api.Router do
 
   scope "/api", Api do
     pipe_through(:api)
+
+    resources("/bookings", BookingController, only: [:index])
   end
 end

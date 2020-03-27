@@ -42,7 +42,8 @@ defmodule Api.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:prometheus_ex, "~> 3.0"},
       {:prometheus_plugs, "~> 1.1.1"},
-      {:dns, "~> 2.1.2"}
+      {:dns, "~> 2.1.2"},
+      {:domain, in_umbrella: true}
     ]
   end
 
@@ -50,8 +51,6 @@ defmodule Api.MixProject do
   #
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
-    [
-      {:domain, in_umbrella: true}
-    ]
+    []
   end
 end

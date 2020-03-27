@@ -1,6 +1,8 @@
 defmodule Booking.Item do
   defstruct [:id, :person, :place]
 
+  alias Booking.Item
+
   def new(person, place) do
     %Item{
       id: random_string(32),
