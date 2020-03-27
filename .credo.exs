@@ -1,4 +1,3 @@
-# config/.credo.exs
 %{
   configs: [
     %{
