@@ -94,6 +94,6 @@ defmodule Api.HealthCheck do
     checks
     |> Enum.map(&Task.async/1)
     |> Enum.map(&Task.await/1)
-    |> Enum.reduce(true, &(&1 and &2))
+    |> Enum.all?()
   end
 end
