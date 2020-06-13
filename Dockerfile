@@ -44,7 +44,7 @@ ARG MIX_ENV
 ARG APP
 ARG PORT
 
-RUN apk add --update ncurses-libs
+RUN apk add --no-cache ncurses-libs && rm -rf /var/cache/apk/*
 
 USER nobody
 
