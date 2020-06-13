@@ -17,8 +17,9 @@ ARG PROJECT
 ENV LANG C.UTF-8
 
 # Install hex and rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
+RUN mix do \
+    local.hex --force, \
+    local.rebar --force
 
 RUN mkdir /$APP
 WORKDIR /$APP
@@ -41,15 +42,13 @@ ARG APP
 ARG PORT
 ARG UID
 
-RUN apk add --update ncurses-libs && \
-    rm -rf /var/cache/apk/*
+RUN apk add --update ncurses-libs
 
-RUN adduser -D -u $UID -h /$APP $APP
+USER nobody
+
 WORKDIR /$APP
 
-COPY --from=builder /$APP/_build/$MIX_ENV/rel/$PROJECT .
-RUN chown -R $APP: /$APP
-USER $APP
+COPY --from=builder --chown=nobody:nobody /$APP/_build/$MIX_ENV/rel/$PROJECT .
 
 EXPOSE $PORT
 

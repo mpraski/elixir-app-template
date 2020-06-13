@@ -1,22 +1,25 @@
-defmodule Api.HealthCheck.Plug do
+defmodule Api.Plugs.HealthCheck do
   @moduledoc """
   Plug for routing health check requests 
   """
 
+  alias Api.HealthCheck
+
   import Plug.Conn
   @behaviour Plug
 
-  def init(opts), do: opts
+  def init(_params) do
+  end
 
   def call(%{path_info: ["ready"]} = conn, _opts) do
     conn
-    |> send_resp(code(Api.HealthCheck.check_readiness()), "")
+    |> send_resp(code(HealthCheck.check_readiness()), "")
     |> halt()
   end
 
   def call(%{path_info: ["live"]} = conn, _opts) do
     conn
-    |> send_resp(code(Api.HealthCheck.check_liveness()), "")
+    |> send_resp(code(HealthCheck.check_liveness()), "")
     |> halt()
   end
 

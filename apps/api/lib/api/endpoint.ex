@@ -10,11 +10,6 @@ defmodule Api.Endpoint do
     signing_salt: "Q+aBTFr8"
   ]
 
-  socket("/socket", Api.UserSocket,
-    websocket: true,
-    longpoll: false
-  )
-
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
@@ -30,7 +25,7 @@ defmodule Api.Endpoint do
     json_decoder: Phoenix.json_library()
   )
 
-  plug(Api.HealthCheck.Plug)
+  plug(Api.Plugs.HealthCheck)
 
   plug(Plug.MethodOverride)
   plug(Plug.Head)
