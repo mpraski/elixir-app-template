@@ -12,7 +12,11 @@ defmodule Api.Application do
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
-      HealthCheck,
+      {HealthCheck,
+       {
+         [HealthCheck.repo?(Domain.Repo)],
+         []
+       }},
       Endpoint
     ]
 
@@ -20,9 +24,6 @@ defmodule Api.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Api.Supervisor]
     {:ok, pid} = Supervisor.start_link(children, opts)
-
-    # Configure health checks
-    HealthCheck.add_readiness(HealthCheck.ping_repo(Domain.Repo))
 
     # Configure Prometheus metrics exporter
     Metrics.Exporter.setup()
