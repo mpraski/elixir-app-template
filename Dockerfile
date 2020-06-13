@@ -1,7 +1,6 @@
-# Set the required arguments
+# ---- REQUIREMENTS ----
 ARG APP=app
 ARG PORT=8080
-ARG UID=1000
 ARG MIX_ENV=prod
 ARG PROJECT=app_template
 
@@ -16,22 +15,27 @@ ARG PROJECT
 
 ENV LANG C.UTF-8
 
-# Install hex and rebar
-RUN mix local.hex --force && \
-    mix local.rebar --force
-
-RUN mkdir /$APP
 WORKDIR /$APP
 
-# Copy over all the necessary application files and directories
+# Copy over configuration that is
+# is unlikely to change oftern
+COPY mix.* ./
 COPY config ./config
-COPY apps ./apps
-COPY mix.exs .
-COPY mix.lock .
-COPY Makefile .
+COPY apps/api/mix.exs ./apps/api/
+COPY apps/domain/mix.exs ./apps/domain/
 
-# Fetch the application dependencies and build the application
-RUN apk add --update make && make build MIX_ENV=$MIX_ENV
+# Install hex, rebar and dependencies
+RUN mix do \
+    local.hex --force, \
+    local.rebar --force, \
+    deps.get --only $MIX_ENV, \
+    deps.compile
+
+# Copy over the code and scenario
+COPY apps ./apps
+
+# Build the application
+RUN MIX_ENV=$MIX_ENV mix do compile, release
 
 # ---- PACKAGE ----
 FROM alpine:3.11
@@ -39,17 +43,14 @@ FROM alpine:3.11
 ARG MIX_ENV
 ARG APP
 ARG PORT
-ARG UID
 
-RUN apk add --update ncurses-libs && \
-    rm -rf /var/cache/apk/*
+RUN apk add --update ncurses-libs
 
-RUN adduser -D -u $UID -h /$APP $APP
+USER nobody
+
 WORKDIR /$APP
 
-COPY --from=builder /$APP/_build/$MIX_ENV/rel/$PROJECT .
-RUN chown -R $APP: /$APP
-USER $APP
+COPY --from=builder --chown=nobody:nobody /$APP/_build/$MIX_ENV/rel/$PROJECT .
 
 EXPOSE $PORT
 
