@@ -71,7 +71,7 @@ spec:
           httpGet:
             path: {{ .livenessProbe.path | default "/live" }}
             port: {{ .livenessProbe.port | default "http" }}
-          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 10 }}
+          initialDelaySeconds: {{ .livenessProbe.initialDelaySeconds | default 60 }}
           periodSeconds: {{ .livenessProbe.periodSeconds | default 10 }}
           timeoutSeconds: {{ .livenessProbe.timeoutSeconds | default 1 }}
           successThreshold: {{ .livenessProbe.successThreshold | default 1 }}
@@ -80,7 +80,7 @@ spec:
           httpGet:
             path: {{ .readinessProbe.path | default "/ready" }}
             port: {{ .readinessProbe.port | default "http" }}
-          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 15 }}
+          initialDelaySeconds: {{ .readinessProbe.initialDelaySeconds | default 60 }}
           periodSeconds: {{ .readinessProbe.periodSeconds | default 10 }}
           timeoutSeconds: {{ .readinessProbe.timeoutSeconds | default 1 }}
           successThreshold: {{ .readinessProbe.successThreshold | default 1 }}
