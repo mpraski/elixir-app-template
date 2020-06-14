@@ -1,7 +1,6 @@
 # Set the required arguments
 ARG APP=app
 ARG PORT=8080
-ARG UID=1000
 ARG MIX_ENV=prod
 ARG PROJECT=app_template
 
@@ -40,7 +39,6 @@ FROM alpine:3.11
 ARG MIX_ENV
 ARG APP
 ARG PORT
-ARG UID
 
 RUN apk add --update ncurses-libs
 
@@ -53,3 +51,5 @@ COPY --from=builder --chown=nobody:nobody /$APP/_build/$MIX_ENV/rel/$PROJECT .
 EXPOSE $PORT
 
 ENTRYPOINT ["app_template/bin/app_template"]
+
+  #font-family: Georgia, Times, Times New Roman, serif; 

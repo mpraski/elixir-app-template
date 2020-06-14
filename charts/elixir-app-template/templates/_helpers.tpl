@@ -42,17 +42,6 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
 
 {{/*
-Create the name of the service account
-*/}}
-{{- define "app-template.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create -}}
-    {{ default (include "app-template.fullname" .) .Values.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Create the egress label for this service
 */}}
 {{- define "app-template.egressLabel" -}}
