@@ -12,8 +12,7 @@ defmodule AppTemplate.MixProject do
           include_executables_for: [:unix],
           applications: [
             api: :permanent,
-            domain: :permanent,
-            gateway: :permanent
+            domain: :permanent
           ]
         ]
       ]
