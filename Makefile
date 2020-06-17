@@ -11,7 +11,11 @@ all: clean test build
 
 build:
 	@echo "$(OK_COLOR)==> Building $(SERVICE_NAME) ($(MIX_ENV))... $(NO_COLOR)"
-	@MIX_ENV=$(MIX_ENV) mix do deps.get --only=$(MIX_ENV), deps.compile, release
+	@MIX_ENV=$(MIX_ENV) mix do compile, release
+
+deps:
+	@echo "$(OK_COLOR)==> Getting deps for $(SERVICE_NAME) ($(MIX_ENV))... $(NO_COLOR)"
+	@MIX_ENV=$(MIX_ENV) mix do deps.get --only=$(MIX_ENV), deps.compile
 
 run:
 	@echo "$(OK_COLOR)==> Running $(SERVICE_NAME)... $(NO_COLOR)"

@@ -3,11 +3,10 @@
 This repo will contain a template for an Elixir/Phoenix application, ready for packaging and deployment in a Kubernetes cluster.
 
 To-Do:
-- [x] MySQL database connector
+- [x] MySQL database
 - [x] Healthchecks
-- [x] Metrics
+- [ ] Metrics
 - [x] Directory structure 
-- [ ] Kinesis support
 - [x] Migrations
 
 ## Requirements

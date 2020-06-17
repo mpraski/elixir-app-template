@@ -18,7 +18,7 @@ ENV LANG C.UTF-8
 WORKDIR /$APP
 
 # Copy over configuration that is
-# is unlikely to change oftern
+# is unlikely to change often
 COPY mix.* ./
 COPY config ./config
 COPY apps/api/mix.exs ./apps/api/
@@ -55,5 +55,3 @@ COPY --from=builder --chown=nobody:nobody /$APP/_build/$MIX_ENV/rel/$PROJECT .
 EXPOSE $PORT
 
 ENTRYPOINT ["app_template/bin/app_template"]
-
-  #font-family: Georgia, Times, Times New Roman, serif; 
