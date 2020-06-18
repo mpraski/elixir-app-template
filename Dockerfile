@@ -1,4 +1,4 @@
-# ---- REQUIREMENTS ----
+# ---- ARGUMENTS ----
 ARG APP=app
 ARG PORT=8080
 ARG MIX_ENV=prod
@@ -17,7 +17,7 @@ ENV LANG C.UTF-8
 
 WORKDIR /$APP
 
-# Copy over configuration that is
+# Copy over configuration that
 # is unlikely to change often
 COPY mix.* ./
 COPY config ./config
@@ -31,7 +31,7 @@ RUN mix do \
     deps.get --only $MIX_ENV, \
     deps.compile
 
-# Copy over the code and scenario
+# Copy over the code
 COPY apps ./apps
 
 # Build the application
@@ -44,12 +44,16 @@ ARG MIX_ENV
 ARG APP
 ARG PORT
 
+# Erlang runtime depends on ncurses library. For SSL support
+# we could also install openssl, but this will be handled by Kubernetes in our setup
 RUN apk add --no-cache ncurses-libs && rm -rf /var/cache/apk/*
 
+# Run as unprivileged user for smaller attack surface
 USER nobody
 
 WORKDIR /$APP
 
+# Copy and chown the binaries
 COPY --from=builder --chown=nobody:nobody /$APP/_build/$MIX_ENV/rel/$PROJECT .
 
 EXPOSE $PORT
