@@ -5,6 +5,7 @@ defmodule Api.Plugs.HealthCheck do
 
   alias Api.HealthCheck
 
+  require Logger
   import Plug.Conn
   @behaviour Plug
 
@@ -12,15 +13,11 @@ defmodule Api.Plugs.HealthCheck do
   end
 
   def call(%{path_info: ["ready"]} = conn, _opts) do
-    conn
-    |> send_resp(code(HealthCheck.check_readiness()), "")
-    |> halt()
+    conn |> check(&HealthCheck.check_readiness/0)
   end
 
   def call(%{path_info: ["live"]} = conn, _opts) do
-    conn
-    |> send_resp(code(HealthCheck.check_liveness()), "")
-    |> halt()
+    conn |> check(&HealthCheck.check_liveness/0)
   end
 
   # nope, not for us, pass it down the chain.
@@ -28,10 +25,15 @@ defmodule Api.Plugs.HealthCheck do
 
   # Private
 
-  defp code(r) do
-    case r do
-      :ok -> :ok
-      :error -> :internal_server_error
+  defp check(conn, fun) when is_function(fun, 0) do
+    case fun.() do
+      :ok ->
+        conn |> send_resp(:ok, "")
+
+      {:error, error} ->
+        Logger.error("Health check failed: #{error}")
+        conn |> send_resp(:internal_server_error, "")
     end
+    |> halt()
   end
 end
