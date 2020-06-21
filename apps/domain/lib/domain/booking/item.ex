@@ -3,6 +3,9 @@ defmodule Booking.Item do
 
   alias Booking.Item
 
+  @doc """
+  Constructs a new Item
+  """
   def new(person, place) do
     %Item{
       id: random_string(32),

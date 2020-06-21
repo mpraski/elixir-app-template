@@ -5,42 +5,51 @@ defmodule Domain.Migration do
 
   @app :domain
 
-  defmacrop repeat(fun, steps \\ 100, interval \\ 500) do
-    quote do
-      Enum.reduce_while(1..unquote(steps), false, fn _, _ ->
-        case unquote(fun) do
-          {:ok, _} ->
-            {:halt, true}
-
-          _ ->
-            :timer.sleep(unquote(interval))
-            {:cont, false}
-        end
-      end)
-    end
-  end
-
+  @doc """
+  Performs migrations for all repos in the project
+  """
+  @spec migrate :: [any]
   def migrate do
-    with rs <- repos() do
-      unless rs
-             |> Enum.map(&fn -> repeat(trySelect(&1)) end)
-             |> Enum.map(&Task.async/1)
-             |> Enum.map(&Task.await(&1, 500 * 100))
-             |> Enum.all?() do
+    with repos <- repos() do
+      unless repos
+             |> Task.async_stream(&try_to(fn -> connect(&1) end))
+             |> Enum.all?(fn {:ok, result} -> result end) do
         raise "Database connectivity problem"
       end
 
-      for repo <- rs do
+      for repo <- repos do
         {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
       end
     end
   end
 
+  @doc """
+  Rolls back migrations for a specific repo and version
+  """
+  @spec rollback(atom, any) :: {:ok, any, any}
   def rollback(repo, version) do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
-  defp trySelect(repo) do
+  # Lazily execute the function specified number
+  # of times, return true if the function returns {:ok, _},
+  # else wait a bit and try again
+  defp try_to(fun, steps \\ 100, interval \\ 500) do
+    fun
+    |> Stream.repeatedly()
+    |> Stream.take(steps)
+    |> Enum.reduce_while(true, fn
+      {:ok, _}, _ ->
+        {:halt, true}
+
+      _, _ ->
+        :timer.sleep(interval)
+        {:cont, false}
+    end)
+  end
+
+  # Try to connect to the database
+  defp connect(repo) do
     try do
       Ecto.Adapters.SQL.query(repo, "SELECT 1")
     rescue
@@ -48,6 +57,7 @@ defmodule Domain.Migration do
     end
   end
 
+  # Get project repos
   defp repos do
     Application.load(@app)
     # This is not in the phoenix documentation, but it's necessary to ensure :ssl is started

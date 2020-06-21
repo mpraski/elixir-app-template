@@ -7,5 +7,9 @@ defmodule Booking.Repo do
     Item.new("James", "Room 3")
   ]
 
+  @doc """
+  Return all bookings
+  """
+  @spec all(Booking.Item) :: [Booking.Item.t(), ...]
   def all(Item), do: @items
 end

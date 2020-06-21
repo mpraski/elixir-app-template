@@ -17,18 +17,34 @@ defmodule Api.HealthCheck do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
   end
 
+  @doc """
+  Add a readiness check
+  """
+  @spec add_readiness((() -> any)) :: :ok
   def add_readiness(check) when is_function(check, 0) do
     GenServer.cast(__MODULE__, {:add_readiness, check})
   end
 
+  @doc """
+  Add a liveness check
+  """
+  @spec add_liveness((() -> any)) :: :ok
   def add_liveness(check) when is_function(check, 0) do
     GenServer.cast(__MODULE__, {:add_liveness, check})
   end
 
+  @doc """
+  Execute readiness checks
+  """
+  @spec check_readiness :: :ok | {:error, String.t()}
   def check_readiness do
     GenServer.call(__MODULE__, :readiness)
   end
 
+  @doc """
+  Execute liness checks
+  """
+  @spec check_liveness :: :ok | {:error, String.t()}
   def check_liveness do
     GenServer.call(__MODULE__, :liveness)
   end
@@ -77,6 +93,18 @@ defmodule Api.HealthCheck do
 
   # Common checks
 
+  @spec repo?(any) :: (() -> :ok | {:error, String.t()})
+  @doc """
+  Pings the Ecto `repo` to check if connection is healthy.
+
+  Returns `:ok` or `{:error, "reason"}`.
+
+  ## Examples
+
+      iex> Api.HealthCheck.repo?(MyRepo)
+      :ok
+
+  """
   def repo?(repo) do
     fn ->
       result =
@@ -93,6 +121,18 @@ defmodule Api.HealthCheck do
     end
   end
 
+  @spec alive?(any) :: (() -> :ok | {:error, String.t()})
+  @doc """
+  Checks if PID returned by `pid_fun` references a living process.
+
+  Returns `:ok` or `{:error, "reason"}`.
+
+  ## Examples
+
+      iex> Api.HealthCheck.alive?(&give_pid/0)
+      :ok
+
+  """
   def alive?(pid_fun) do
     fn ->
       if Process.alive?(pid_fun.()) do
@@ -105,8 +145,10 @@ defmodule Api.HealthCheck do
 
   # Private
 
+  # Schedule another check
   defp tick, do: Process.send_after(self(), :tick, @tick_interval)
 
+  # Perform the checks asynchronously
   defp all_pass?(checks) do
     checks
     |> Task.async_stream(& &1.())

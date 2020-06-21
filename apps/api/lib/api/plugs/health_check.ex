@@ -1,6 +1,6 @@
 defmodule Api.Plugs.HealthCheck do
   @moduledoc """
-  Plug for routing health check requests 
+  Plug for routing health check requests
   """
 
   alias Api.HealthCheck
@@ -12,15 +12,17 @@ defmodule Api.Plugs.HealthCheck do
   def init(_params) do
   end
 
+  # Check readiness
   def call(%{path_info: ["ready"]} = conn, _opts) do
     conn |> check(&HealthCheck.check_readiness/0)
   end
 
+  # Check liveness
   def call(%{path_info: ["live"]} = conn, _opts) do
     conn |> check(&HealthCheck.check_liveness/0)
   end
 
-  # nope, not for us, pass it down the chain.
+  # Not a healthz request, pass down the chain
   def call(conn, _opts), do: conn
 
   # Private
