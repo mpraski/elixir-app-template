@@ -1,4 +1,6 @@
 defmodule Api.Router do
+  @moduledoc false
+
   use Api, :router
 
   pipeline :api do

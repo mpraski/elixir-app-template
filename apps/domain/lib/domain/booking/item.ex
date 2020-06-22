@@ -1,5 +1,9 @@
 defmodule Booking.Item do
-  defstruct [:id, :person, :place]
+  @moduledoc """
+  A simple representation of a booking
+  """
+
+  defstruct ~w[id person place]a
 
   alias Booking.Item
 

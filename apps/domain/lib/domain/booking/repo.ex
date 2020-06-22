@@ -1,4 +1,8 @@
 defmodule Booking.Repo do
+  @moduledoc """
+  A mock repo for Bookings
+  """
+
   alias Booking.Item
 
   @items [

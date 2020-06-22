@@ -1,4 +1,8 @@
 defmodule Api.BookingController do
+  @moduledoc """
+  A controller managing the Booking resource
+  """
+
   use Api, :controller
 
   def index(conn, _params) do

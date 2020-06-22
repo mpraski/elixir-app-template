@@ -1,5 +1,9 @@
 defmodule Booking do
-  alias Booking.{Repo, Item}
+  @moduledoc """
+  Module definition operations on Bookings
+  """
+
+  alias Booking.{Item, Repo}
 
   @repo Repo
 

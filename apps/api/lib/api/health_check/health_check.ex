@@ -10,6 +10,10 @@ defmodule Api.HealthCheck do
   use GenServer
 
   defmodule State do
+    @moduledoc """
+    Internal state
+    """
+
     defstruct ready: [], live: [], results: {:ok, :ok}
   end
 

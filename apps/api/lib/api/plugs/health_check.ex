@@ -12,12 +12,16 @@ defmodule Api.Plugs.HealthCheck do
   def init(_params) do
   end
 
-  # Check readiness
+  @doc """
+  Check readiness
+  """
   def call(%{path_info: ["ready"]} = conn, _opts) do
     conn |> check(&HealthCheck.check_readiness/0)
   end
 
-  # Check liveness
+  @doc """
+  Check liveness
+  """
   def call(%{path_info: ["live"]} = conn, _opts) do
     conn |> check(&HealthCheck.check_liveness/0)
   end

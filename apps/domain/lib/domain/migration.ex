@@ -50,11 +50,9 @@ defmodule Domain.Migration do
 
   # Try to connect to the database
   defp connect(repo) do
-    try do
-      Ecto.Adapters.SQL.query(repo, "SELECT 1")
-    rescue
-      e in DBConnection.ConnectionError -> e
-    end
+    Ecto.Adapters.SQL.query(repo, "SELECT 1")
+  rescue
+    e in DBConnection.ConnectionError -> e
   end
 
   # Get project repos
