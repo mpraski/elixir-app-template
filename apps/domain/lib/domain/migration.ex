@@ -4,15 +4,18 @@ defmodule Domain.Migration do
   """
 
   @app :domain
+  @steps 100
+  @interval 500
 
   @doc """
   Performs migrations for all repos in the project
   """
   @spec migrate :: [any]
   def migrate do
-    with repos <- repos() do
+    with repos <- repos(),
+         connect <- &try_to(fn -> connect(&1) end) do
       unless repos
-             |> Task.async_stream(&try_to(fn -> connect(&1) end))
+             |> Task.async_stream(connect, timeout: @steps * @interval)
              |> Enum.all?(fn {:ok, result} -> result end) do
         raise "Database connectivity problem"
       end
@@ -34,7 +37,7 @@ defmodule Domain.Migration do
   # Lazily execute the function specified number
   # of times, return true if the function returns {:ok, _},
   # else wait a bit and try again
-  defp try_to(fun, steps \\ 100, interval \\ 500) do
+  defp try_to(fun, steps \\ @steps, interval \\ @interval) do
     fun
     |> Stream.repeatedly()
     |> Stream.take(steps)
