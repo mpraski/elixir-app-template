@@ -21,8 +21,8 @@ config :api, Api.Endpoint,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :prometheus,
-  mnesia_collector_metrics: [],
-  vm_memory_collector_metrics: [],
-  vm_statistics_collector_metrics: [],
-  vm_system_info_collector_metrics: []
+#config :prometheus,
+#  mnesia_collector_metrics: [],
+#  vm_memory_collector_metrics: [],
+#  vm_statistics_collector_metrics: [,
+#  vm_system_info_collector_metrics: []

@@ -14,7 +14,7 @@ metadata:
 spec:
   type: {{ .Values.service.type | default "ClusterIP"}}
   ports:
-    - port: {{ .Values.service.externalPort | default 80 }}
+    - port: {{ .Values.service.externalPort | default 8080 }}
       targetPort: {{ .Values.service.targetPort | default "http" }}
       protocol: TCP
       name: http
