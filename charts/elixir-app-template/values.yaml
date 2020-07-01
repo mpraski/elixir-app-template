@@ -19,7 +19,7 @@ networkPolicy:
 
 service:
   type: ClusterIP
-  externalPort: 80
+  externalPort: 8080
   annotations: {}
   labels: {}
 
