@@ -13,7 +13,7 @@ spec:
     matchLabels:
       {{- include "app-template.labels" . | nindent 6 }}
   endpoints:
-  - port: {{ .Values.serviceMonitor.port | default "http-probe" }}
+  - port: {{ .Values.serviceMonitor.port | default "http" }}
     path: {{ .Values.serviceMonitor.path }}
     interval: {{ .Values.serviceMonitor.interval }}
 {{- end }}

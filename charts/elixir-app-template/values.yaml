@@ -24,10 +24,11 @@ service:
   labels: {}
 
 serviceMonitor:
-  enabled: false
+  enabled: true
   interval: "30s"
   path: /metrics
-  selector: {}
+  selector:
+    release: prometheus
 
 migration:
   enabled: true
