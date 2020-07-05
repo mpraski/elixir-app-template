@@ -26,7 +26,7 @@ defmodule Api.Application do
     {:ok, pid} = Supervisor.start_link(children, opts)
 
     # Configure Prometheus metrics exporter
-    Metrics.Exporter.setup()
+    Metrics.Setup.setup()
 
     {:ok, pid}
   end

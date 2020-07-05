@@ -1,0 +1,4 @@
+grafana:
+  sidecar:
+    dashboards:
+      searchNamespace: ALL

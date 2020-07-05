@@ -1,7 +1,6 @@
 defmodule Api.Metrics.Exporter do
   @moduledoc """
-  Module defining the prometheus metrics
-  to be exported
+  Plug the exporter in an endpoint
   """
 
   use Prometheus.PlugExporter

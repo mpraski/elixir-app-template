@@ -5,8 +5,12 @@ defmodule Api.BookingController do
 
   use Api, :controller
 
+  alias Api.Metrics.ViewInstrumenter
+
   def index(conn, _params) do
-    items = Booking.list_items()
-    render(conn, "index.json", items: items)
+    with items <- Booking.list_items(),
+         :ok <- ViewInstrumenter.view(:bookings) do
+      render(conn, "index.json", items: items)
+    end
   end
 end

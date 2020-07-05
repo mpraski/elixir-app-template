@@ -33,6 +33,10 @@ serviceMonitor:
 migration:
   enabled: true
 
+dashboards:
+  enabled: true
+  label: grafana_dashboard
+
 configMap:
   LOG_LEVEL: "debug"
 

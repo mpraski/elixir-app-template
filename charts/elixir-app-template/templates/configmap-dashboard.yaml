@@ -1,0 +1,18 @@
+{{- if .Values.dashboards }}
+  {{- if .Values.dashboards.enabled }}
+    {{- $root := . }}
+    {{- range $path, $bytes := .Files.Glob "dashboards/*" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "app-template.fullname" $ }}-{{ base $path | trimSuffix ".json" }}
+  labels:
+    {{ include "app-template.labels" $ | nindent 4 }}
+    {{ $.Values.dashboards.label }}: "1"
+data:
+  {{ base $path }}: |-
+{{ $root.Files.Get $path | indent 4}}
+    {{ end }}
+  {{- end }}
+{{- end }}
