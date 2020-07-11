@@ -24,7 +24,13 @@ defmodule Api.MixProject do
   def application do
     [
       mod: {Api.Application, []},
-      extra_applications: [:logger, :runtime_tools, :prometheus_ex, :prometheus_plugs]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :prometheus_ex,
+        :prometheus_phoenix,
+        :prometheus_plugs
+      ]
     ]
   end
 
@@ -42,6 +48,7 @@ defmodule Api.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:prometheus_ex, "~> 3.0"},
       {:prometheus_plugs, "~> 1.1.1"},
+      {:prometheus_phoenix, "~> 1.3"},
       {:dns, "~> 2.1.2"},
       {:domain, in_umbrella: true}
     ]

@@ -16,10 +16,21 @@ config :api,
 config :api, Api.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "SkhLSEBG7hcIRVGRQMhMAHYtlVwbHH7LHlWTUUCj6mIhlXgxkVbW2YlSnRutaTzq",
-  render_errors: [view: Api.ErrorView, accepts: ~w(json)]
+  render_errors: [view: Api.ErrorView, accepts: ~w(json)],
+  instrumenters: [Api.Metrics.PhoenixInstrumenter]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :prometheus, App.PhoenixInstrumenter,
+  controller_call_labels: [:controller, :action],
+  registry: :default,
+  duration_unit: :microseconds
+
+config :prometheus, App.PipelineInstrumenter,
+  labels: [:status_class, :method, :host, :scheme, :request_path],
+  registry: :default,
+  duration_unit: :microseconds
 
 #config :prometheus,
 #  mnesia_collector_metrics: [],
